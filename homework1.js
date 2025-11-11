@@ -20,9 +20,10 @@ function checkProbabilityTheory(count) {
         Нуль: num0,
         Парні: num2,
         Непарні: num1,
-        Відсоток_парних: Math.round (num2Percent) + '%',
-        Відсоток_непарних: Math.round (num1Percent) + '%'
+        Відсоток_парних: num2Percent.toFixed(2) + '%',
+        Відсоток_непарних: num1Percent.toFixed(2) + '%'
     }                                                           // виводимо значення об'єктом 
   }
   
-  console.log(checkProbabilityTheory(1000)); // запускаєм функцію з проставленим значенням count 
+  console.log(checkProbabilityTheory(100000)); // запускаєм функцію з проставленим значенням count 
+  // Висновок: Чим більше ітерацій робити, тим більше відсоткове співвідношення наближається до 50/50
