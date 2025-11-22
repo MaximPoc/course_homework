@@ -1,29 +1,35 @@
-function checkProbabilityTheory(count) {
-    let num0 = 0 // назначаєм перемінну для каунтера нуля (для закріплення навичок)
-    let num1 = 0; // назначаєм перемінну для каунтера непарних чисел
-    let num2 = 0; // назвачаємо перемінну для каунтра парних чисел (окрім нуля)
-    let min = 0;
-    let max = 100; // задаєм максимельне та мінімальне значення 
-  
-    for (let a = 0; a < count; a++) { // створюємо цикл, для генерації рандомних чисел кільксть залежить від значення count 
-      let random = Math.floor(Math.random() * (max - min + 1) + min); // генеруємо рандомні числа 
-      if (random === 0) num0 ++ // для досвіду, вирішив винести окремо число 0
-      else
-      if (random % 2 === 0) num2++; // умова при якій, залишок згенерованого рандомного числа після ділення на 2 строго дорівнює нулю, до значення каунтера парного числа збільшується на 1 
-      else num1++; // умова при якій, залишок згенерованого рандомного числа після ділення на 2 строго не дорівнює нулю, до значення каунтера непарного числа збільшується на 1 
-    }
-    let withoutZero = num1+num2 // виокремлюєм нулі
-    let num2Percent = (num2/withoutZero)*100 // підраховуєм процентне значення парних чисел 
-    let num1Percent = (num1/withoutZero)*100 // підраховуєм процентне значення непарних чисел
-    return {
-        Кількість: count,
-        Нуль: num0,
-        Парні: num2,
-        Непарні: num1,
-        Відсоток_парних: num2Percent.toFixed(2) + '%',
-        Відсоток_непарних: num1Percent.toFixed(2) + '%'
-    }                                                           // виводимо значення об'єктом 
+var arr = [
+  {
+      userName:"Test",
+      lastName:"Test",
+      email:"test.test@gmail.com"
+  },
+  {
+      userName:"Dmitro",
+      lastName:"Porohov",
+      email:"dmitro.porohov@yahoo.com"
+  },
+  {
+      userName:"Andrii",
+      lastName:"",
+      email:"andrii@mail.ru"
+  },
+];
+
+var emailRegVal = /^[a-zA-Z0-9._-]+@(gmail\.com|yahoo\.com)$/;
+
+var trustedEmails = [];
+
+for (var i = 0; i < arr.length; i++) {
+  var email = arr[i].email;
+
+  if (emailRegVal.test(email)) {
+      console.log(email + " Валідна пошта");
+      trustedEmails.push(email);
+  } 
+  else {
+      console.log(email + " Пошта не підтримується");
   }
-  
-  console.log(checkProbabilityTheory(100000)); // запускаєм функцію з проставленим значенням count 
-  // Висновок: Чим більше ітерацій робити, тим більше відсоткове співвідношення наближається до 50/50
+}
+
+console.log("Валідна пошта: " + trustedEmails);
