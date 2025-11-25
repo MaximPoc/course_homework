@@ -1,31 +1,51 @@
-var arr = [
-  {
-      userName:"Test",
-      lastName:"Test",
-      email:"test.test@gmail.com"
-  },
-  {
-      userName:"Dmitro",
-      lastName:"Porohov",
-      email:"dmitro.porohov@yahoo.com"
-  },
-  {
-      userName:"Andrii",
-      lastName:"",
-      email:"andrii@mail.ru"
-  },
-];
+var services = {
+  "стрижка": "60 грн",
+  "гоління": "80 грн",
+  "Миття голови": "100 грн"
+};
 
-var emailRegVal = /^[a-zA-Z0-9._-]+@(gmail\.com|yahoo\.com)$/; // робимо перевірку на символи до @ та після
+services["Розбити скло"] = "200 грн";
 
-for (var i = 0; i < arr.length; i++) {
-  var email = arr[i].email; // цикл перевірок поля email
+// Загальна сума
+function price() {
+  var sum = 0;
 
-  if (emailRegVal.test(email)) {
-      console.log(email + " Валідна пошта"); // виводемо знаення валідної пошти 
-  } 
-  else {
-      console.log(email + " Пошта не підтримується"); // виводимо значення невалідної пошти 
+  for (var key in services) {
+    var num = parseInt(services[key]);
+    sum += num;
   }
+
+  return sum;
 }
 
+// Мінімальна ціна
+function minPrice() {
+  var prices = [];
+  var i = 0;
+
+  for (var key in services) {
+    var num = parseInt(services[key]);
+    prices[i] = num;
+    i++;
+  }
+
+  return Math.min(...prices);
+}
+
+// Максимальна ціна
+function maxPrice() {
+  var prices = [];
+  var i = 0;
+
+  for (var key in services) {
+    var num = parseInt(services[key]);
+    prices[i] = num;
+    i++;
+  }
+
+  return Math.max(...prices);
+}
+
+console.log("Загальна вартість:", price(), "грн");
+console.log("Мінімальна ціна:", minPrice(), "грн");
+console.log("Максимальна ціна:", maxPrice(), "грн");
