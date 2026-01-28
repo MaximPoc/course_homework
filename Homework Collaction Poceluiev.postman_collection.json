@@ -1,0 +1,464 @@
+{
+	"info": {
+		"_postman_id": "47f6db71-bac3-4802-bfd6-52e7dbf4a0f6",
+		"name": "Homework Collaction Poceluiev",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31698253"
+	},
+	"item": [
+		{
+			"name": "Отримання всіх об'єктів",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Формат ID: _id є коректним рядком (ObjectId)\", function () {\r",
+							"    pm.expect(responseData[0]._id).to.be.a('string');\r",
+							"    pm.expect(responseData[0]._id).to.match(/^[0-9a-fA-F]{24}$/);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Статус-код 200: Запит успішний\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Відповідь є масивом документів\", function () {\r",
+							"    const data = pm.response.json();\r",
+							"    pm.expect(data).to.be.an('array');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Динамічна перевірка: результати знайдено та відповідають параметрам\", function () {\r",
+							"    const results = pm.response.json();\r",
+							"    const queryParams = pm.request.url.query.toObject();\r",
+							"\r",
+							"    delete queryParams.limit; \r",
+							"\r",
+							"    pm.expect(results.length, \"УВАГА: Пошук не дав результатів. Перевірте фільтри або наявність даних у MaxDB\")\r",
+							"        .to.be.above(0);\r",
+							"\r",
+							"    results.forEach((doc, index) => {\r",
+							"        Object.keys(queryParams).forEach((key) => {\r",
+							"            let expectedValue = queryParams[key];\r",
+							"            let actualValue = doc[key];\r",
+							"\r",
+							"            pm.expect(doc, `Документ №${index+1} не має поля ${key}`).to.have.property(key);\r",
+							"\r",
+							"            if (typeof actualValue === 'number') {\r",
+							"                pm.expect(actualValue, `Невідповідність числа у полі ${key} (док. №${index+1})`)\r",
+							"                    .to.eql(Number(expectedValue));\r",
+							"            } else {\r",
+							"                pm.expect(actualValue, `Невідповідність тексту у полі ${key} (док. №${index+1})`)\r",
+							"                    .to.match(new RegExp(expectedValue, \"i\"));\r",
+							"            }\r",
+							"        });\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Цілісність даних: наявність createdAt\", function () {\r",
+							"    const data = pm.response.json();\r",
+							"\r",
+							"    pm.expect(data.length, \"Помилка: Пошук не дав результатів, масив порожній\").to.be.above(0);\r",
+							"\r",
+							"    pm.expect(data[0], \"Документ не містить мітки часу createdAt\").to.have.property('createdAt');    pm.expect(data[0].createdAt).to.be.a('string');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Продуктивність: час відповіді менше 500мс\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500); \r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Збереження ID для наступних тестів\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"\r",
+							"    let targetId;\r",
+							"\r",
+							"    if (Array.isArray(jsonData)) {\r",
+							"        const randomIndex = Math.floor(Math.random() * jsonData.length);\r",
+							"        targetId = jsonData[randomIndex]._id;\r",
+							"    } else {\r",
+							"        targetId = jsonData._id;\r",
+							"    }\r",
+							"\r",
+							"    pm.expect(targetId).to.exist;\r",
+							"    pm.environment.set(\"default_id\", targetId);\r",
+							"    \r",
+							"    console.log(\"ID успішно збережено в {{default_id}}: \" + targetId);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/listingsAndReviews/search/query?property_type=Apartment&accommodates=5&bedrooms=2&summary=pupupu",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"listingsAndReviews",
+						"search",
+						"query"
+					],
+					"query": [
+						{
+							"key": "property_type",
+							"value": "Apartment"
+						},
+						{
+							"key": "accommodates",
+							"value": "5"
+						},
+						{
+							"key": "bedrooms",
+							"value": "2"
+						},
+						{
+							"key": "summary",
+							"value": "pupupu"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Отримання конкретного об'єкта за ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Формат ID: _id — ObjectId\", function () {\r",
+							"    pm.expect(responseData).to.have.property(\"_id\");\r",
+							"    pm.expect(responseData._id).to.be.a(\"string\");\r",
+							"    pm.expect(responseData._id).to.match(/^[0-9a-fA-F]{24}$/);\r",
+							"});\r",
+							"pm.test(\"Тип даних name — String\", function () {\r",
+							"    pm.expect(responseData).to.have.property(\"name\");\r",
+							"    pm.expect(responseData.name).to.be.a(\"string\");\r",
+							"});\r",
+							"pm.test(\"Данні запиту відповідають очікуваним\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"id з відповіді відповідає значенню з змінної середовища\", function () {\r",
+							"    const jsonData = pm.response.json();\r",
+							"        const expectedId = pm.environment.get(\"default_id\");\r",
+							"    pm.expect(jsonData._id).to.equal(expectedId);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/listingsAndReviews/{{default_id}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"listingsAndReviews",
+						"{{default_id}}"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Створення нового об'єкта",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"required\": [\"_id\", \"name\", \"price\", \"createdAt\"],\r",
+							"    \"properties\": {\r",
+							"        \"_id\": { \"type\": \"string\" },\r",
+							"        \"name\": { \"type\": \"string\" },\r",
+							"        \"price\": { \"type\": \"number\" },\r",
+							"        \"property_type\": { \"type\": \"string\" },\r",
+							"        \"createdAt\": { \"type\": \"string\" }\r",
+							"    }\r",
+							"};\r",
+							"\r",
+							"pm.test(\"Відповідь відповідає схемі JSON\", function () {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"pm.test(\"Запис успішно створено\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"const requestBody = JSON.parse(pm.request.body.raw);\r",
+							"const responseData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Цілісність: Дані у відповіді збігаються з відправленими\", function () {\r",
+							"    pm.expect(responseData.name).to.eql(requestBody.name);\r",
+							"    pm.expect(responseData.price).to.eql(requestBody.price);\r",
+							"    pm.expect(responseData.accommodates).to.eql(requestBody.accommodates);\r",
+							"    pm.expect(responseData.amenities).to.be.an('array').that.includes(\"Wifi\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Формат ID: _id є коректним рядком (ObjectId)\", function () {\r",
+							"    pm.expect(responseData._id).to.be.a('string');\r",
+							"    pm.expect(responseData._id).to.match(/^[0-9a-fA-F]{24}$/);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Часові мітки: createdAt встановлено коректно\", function () {\r",
+							"    pm.expect(responseData).to.have.property('createdAt');\r",
+							"    \r",
+							"    const createdAt = Date.parse(responseData.createdAt);\r",
+							"    const now = new Date().getTime();\r",
+							"    const oneMinute = 60000;\r",
+							"    \r",
+							"    pm.expect(createdAt).to.be.below(now + 1000); \r",
+							"    pm.expect(now - createdAt).to.be.below(oneMinute);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Продуктивність: Сервер відповів швидше ніж за 300мс\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(300);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Валідація типів: числові поля є числами\", function () {\r",
+							"    pm.expect(responseData.price).to.be.a('number');\r",
+							"    pm.expect(responseData.beds).to.be.a('number');\r",
+							"    pm.expect(responseData.bedrooms).to.be.a('number');\r",
+							"    pm.expect(responseData.accommodates).to.be.a('number');\r",
+							"});\r",
+							"pm.test(\"Валідація типів: числові поля є рядком\", function () {\r",
+							"    pm.expect(responseData.name).to.be.a('string');\r",
+							"    pm.expect(responseData.summary).to.be.a('string');\r",
+							"    pm.expect(responseData.property_type).to.be.a('string');\r",
+							"    pm.expect(responseData.room_type).to.be.a('string');\r",
+							"    pm.expect(responseData.bed_type).to.be.a('string');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Валідація типів: amenities це масив\", function () {\r",
+							"    pm.expect(responseData.amenities).to.be.an('array');\r",
+							"    });\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Збереження ID та звірка даних\", function () {\r",
+							"    // Напряму беремо _id, оскільки запис завжди один\r",
+							"    const targetId = jsonData._id;\r",
+							"    \r",
+							"    pm.expect(targetId).to.exist;\r",
+							"    \r",
+							"    // Зберігаємо в змінну оточення\r",
+							"    pm.environment.set(\"id\", targetId);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Modern Kyiv Loft\",\r\n  \"summary\": \"pupupu\",\r\n  \"property_type\": \"Apartment\",\r\n  \"room_type\": \"Entire home/apt\",\r\n  \"bed_type\": \"Real Bed\",\r\n  \"accommodates\": 5,\r\n  \"bedrooms\": 2,\r\n  \"beds\": 1,\r\n  \"bathrooms\": 1,\r\n  \"amenities\": [\"Wifi\", \"Kitchen\", \"Heating\", \"Workspace\"],\r\n  \"price\": 55.00\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/listingsAndReviews",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"listingsAndReviews"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Оновлення існуючого об'єкта",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseData = pm.response.json();\r",
+							"const requestBody = JSON.parse(pm.request.body.raw);\r",
+							"\r",
+							"pm.test(\"Документ оновлено: статус 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// 3. Тест: Перевірка оновлених значень (Data Consistency)\r",
+							"pm.test(\"Цілісність: усі надіслані поля оновлені коректно\", function () {\r",
+							"    // Проходимо циклом по кожному полю, яке ми відправили в Body\r",
+							"    Object.keys(requestBody).forEach((key) => {\r",
+							"        // Порівнюємо значення у відповіді зі значенням у запиті\r",
+							"        pm.expect(responseData[key], `Поле [${key}] не збігається з відправленим`)\r",
+							"            .to.eql(requestBody[key]);\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"// 4. Тест: Валідація міток часу (Завдання 4.1)\r",
+							"pm.test(\"Мітки часу: createdAt збережено, updatedAt встановлено\", function () {\r",
+							"    // Перевіряємо, що дата створення нікуди не зникла\r",
+							"    pm.expect(responseData).to.have.property('createdAt');\r",
+							"    \r",
+							"    // Перевіряємо наявність updatedAt\r",
+							"    pm.expect(responseData).to.have.property('updatedAt');\r",
+							"\r",
+							"    // Перевіряємо, що updatedAt - це свіжа дата (не раніше ніж 1 хв тому)\r",
+							"    const updatedAt = Date.parse(responseData.updatedAt);\r",
+							"    const now = new Date().getTime();\r",
+							"    const oneMinute = 60000;\r",
+							"\r",
+							"    pm.expect(updatedAt).to.be.below(now + 1000); \r",
+							"    pm.expect(now - updatedAt).to.be.below(oneMinute);\r",
+							"    \r",
+							"    // Перевірка логіки: дата оновлення має бути пізнішою або рівною даті створення\r",
+							"    const createdAt = Date.parse(responseData.createdAt);\r",
+							"    pm.expect(updatedAt).to.be.at.least(createdAt);\r",
+							"});\r",
+							"\r",
+							"// 5. Тест: Продуктивність (Завдання 4.2)\r",
+							"pm.test(\"Час відповіді сервера менше 400мс\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"price\": 75.00,\r\n  \"summary\": \"No smoking, no parties please.\",\r\n  \"bed_type\": \"Fake Bad\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/listingsAndReviews/{{id}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"listingsAndReviews",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Видалення об'єкта",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Запис видалений\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/api/listingsAndReviews/{{id}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"listingsAndReviews",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
